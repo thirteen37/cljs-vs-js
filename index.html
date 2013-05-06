@@ -1,366 +1,768 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ClojureScript - The action movie</title>
+    <meta name="description" content="A introduction to ClojureScript for Javascript programmers" />
+    <meta name="author" content="Lim Yu-Xi" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="css/reveal.min.css" />
+    <link rel="stylesheet" href="css/theme/default.css" id="theme" />
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css" />
+    <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+    <script type="text/javascript">
+      document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+    </script>
+    <!--[if lt IE 9]>
+        <script src="lib/js/html5shiv.js" type="text/javascript"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="reveal">
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+        <section>
+          <h1>ClojureScript</h1>
+          <h3>The action movie</h3>
+          <p><small>JS Meetup May 2013</small></p>
+        </section>
 
-	<head>
-		<meta charset="utf-8">
+        <section>
+          <section>
+            <h2>Clo-what?</h2>
+            <aside class="notes">
+	      Clojure with a "J".
+            </aside>
+          </section>
+          <section>
+            <h2>Clo<em>j</em>ure</h2>
+            <p>A modern functional Lisp for the JVM</p>
+            <aside class="notes">
+	      Lisp is an old language with many variants: Scheme,
+	      Racket, Common Lisp. There are other Lisps for the JVM
+	      (JScheme, ABCL) but Clojure is unique for not being
+	      based on the existing Lisp families.
+	    </aside>
+          </section>
+          <section>
+            <h2>Clojure<em>Script</em></h2>
+            <p>An official implementation targeting Javascript</p>
+            <aside class="notes">
+	      First-class member of the Clojure family. The compiler
+	      written in Clojure and outputs to Javascript suitable
+	      for Google Closure to then compile into optimized
+	      Javascript.
+            </aside>
+          </section>
+          <section>
+            <p>Rich Hickey, Clojure inventor:</p>
+            <blockquote cite="https://groups.google.com/d/msg/clojure/WwocFhk45us/1wPj3kuKyIMJ">
+              ClojureScript is an action movie, and we're interested in helping people kick butt.
+            </blockquote>
+            <aside class="notes">
+	      Some thread on Google Groups where some guy was saying
+	      he was disappointed with Clojurescript for not looking
+	      like Javascript.
+            </aside>
+            <aside class="notes">
+	      ClojureScript looks like Clojure, not Javascript. It
+	      doesn't share the same goals as Coffeescript.
+            </aside>
+          </section>
+        </section>
 
-		<title>reveal.js - The HTML Presentation Framework</title>
+        <section>
+          <section>
+            <p>Production-ready, with some</p>
+            <h2>Notable users</h2>
+            <aside class="notes">
+              Lots
+              of <a href="http://clojurewest.org/sessions/">coverage</a>
+              in the recent Clojure West conference.
+            </aside>
+          </section>
+          <section>
+            <figure>
+              <img src="images/lighttable.png" />
+              <figcaption><a href="http://www.lighttable.com/" target="_blank">Light Table</a></figcaption>
+            </figure>
+            <aside class="notes">
+              Interactive IDE for Clojure, ClojureScript, and
+              Javascript. Originally written in Clojure but now
+              largely rewritten in ClojureScript.
+            </aside>
+          </section>
+          <section>
+            <figure>
+              <img src="images/prismatic.png" />
+              <figcaption><a href="http://getprismatic.com/" target="_blank">Prismatic</a></figcaption>
+            </figure>
+            <aside class="notes">
+              News recommendation engine. ClojureScript frontend and
+              Clojure backend.
+            </aside>
+          </section>
+        </section>
 
-		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
-		<meta name="author" content="Hakim El Hattab">
+        <section>
+          <p>ClojureScript</p>
+          <h2>better than pure JS</h2>
+          <aside class="notes">
+	    Not a comprehensive look at Clojurescript, just the key advantages over Javascript.
+          </aside>
+        </section>
+        <section>
+          <section>
+            <h2>Sensible typing</h2>
+            <p>No <a href="https://www.destroyallsoftware.com/talks/wat" target="_blank">wats</a></p>
+            <p><small>Ok, fewer wats</small></p>
+          </section>
+          <section>
+            <p>Javascript wat</p>
+            <pre><code data-trim contenteditable class="javascript">
+{} == {}  // false
+"1" == 1  // true
+if ("") { true } else { false }  // false
+            </code></pre>
+            <aside class="notes">
+              And fine, that third one isn't wat-worthy.
+            </aside>
+            <p>Clojure non-wat</p>
+            <pre><code data-trim contenteditable class="clojure">
+(= {} {})  ;; true
+(= "1" 1)  ;; false
+(if "" true false)  ;; true
+            </code></pre>
+          </section>
+        </section>
+        <section>
+          <section>
+            <h2>"Normal" scoping rules</h2>
+            <p>No hoisting, no function scope</p>
+            <aside class="notes">
+              Block scope coming in ES6
+            </aside>
+          </section>
+          <section>
+            <p>Javascript gotcha</p>
+            <pre><code data-trim contenteditable class="javascript">
+var a = [];
+for (var i = 0; i &lt; 3; i++) {
+  a.push(function() { console.log(i) });
+}
+a[0]();  // 2
+            </code></pre>
+            <aside class="notes">
+              Typical solution for Javascript is a closure within the
+              for-loop.
+            </aside>
+            <p>Works as expected in ClojureScript</p>
+            <pre><code data-trim contenteditable class="clojure">
+(def a (atom []))
+(dotimes [i 3]
+  (swap! a conj (fn [] i)))
+((@a 0))  ;; 0
+            </code></pre>
+          </section>
+        </section>
+        <section>
+          <section>
+            <h2>Destructuring</h2>
+            <p>Coffeescript users have seen something like this</p>
+          </section>
+          <section>
+            <p>Destructuring arrays and maps</p>
+            <pre><code data-trim contenteditable class="clojure">
+(def arr ["1" "2" "3"])
+(let [[a b c] arr]
+  (println a b c))  ;; 1 2 3
+            </code></pre>
+            <pre><code data-trim contenteditable class="clojure">
+(def m {:a "1"
+        :b "2"
+        :c "3"})
+(let [{:keys [a b c]} m]
+  (println a b c))  ;; 1 2 3
+            </code></pre>
+            <aside class="notes">
+              Can be done to any depth.
+            </aside>
+          </section>
+          <section>
+            <p>Using the rest parameter</p>
+            <pre><code data-trim contenteditable class="clojure">
+(def arr ["1" "2" "3" "4" "5"])
+(let [[a b _ & c] arr]
+  (println a b c))  ;; 1 2 (4 5)
+            </code></pre>
+            <aside class="notes">
+              Like Coffeescript's splat.
+            </aside>
+          </section>
+        </section>
 
-		<meta name="apple-mobile-web-app-capable" content="yes" />
-		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <section>
+          <h2>Richer data types</h2>
+          <ul>
+            <li>Sets</li>
+            <aside class="notes">
+              Coming in ES6
+            </aside>
+            <li>Maps with arbitrary keys</li>
+            <aside class="notes">
+              Also coming in ES6
+            </aside>
+            <li>Symbols</li>
+            <aside class="notes">
+              Syntactic candy. Underlying implementation is a string
+              in CLJS.
+            </aside>
+            <li>Lists and vectors</li>
+            <aside class="notes">
+              Different performance characteristics. Though I'm not
+              sure if this is the case for CLJS.
+            </aside>
+          </ul>
+        </section>
 
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <section>
+          <section>
+            <h2>Functional programming</h2>
+            <aside class="notes">
+	      There are several aspects to functional programming:
+	      first-class and higher-order functions, lazy evaluation,
+	      immutable state, type inference. Clojure offers the
+	      first three. The first two are important to
+	      ClojureScript.
+            </aside>
+          </section>
+          <section>
+            <h2>Functions are first-class citizens</h2>
+            <p>Good standard set of functions that operate on functions</p>
+          </section>
+          <section>
+            <p>Similar to Array extras but work on all sequential collections</p>
+            <ul>
+              <li><code>map</code></li>
+              <li><code>reduce</code></li>
+              <li><code>filter</code></li>
+              <li><code>every?</code></li>
+              <li><code>some</code></li>
+            </ul>
+            <aside class="notes">
+	      You can see this in ES5.
+            </aside>
+          </section>
+          <section>
+            <p>Javascript</p>
+            <pre><code data-trim contenteditable class="Javascript">
+[0, 1, 2, 3].forEach(function(elem) {
+  console.log(elem)
+});
+// 0
+// 1
+// 2
+// 3
+            </code></pre>
+            <p>Clojure</p>
+            <pre><code data-trim contenteditable class="Clojure">
+(doall (map println [0 1 2 3]))
+;; 0
+;; 1
+;; 2
+;; 3
+            </code></pre>
+            <aside class="notes">
+              doall forces evaluation since map is lazy. We'll see
+              more about laziness later.
+            </aside>
+          </section>
+          <section>
+            <p>Again with a map</p>
+            <pre><code data-trim contenteditable class="Clojure">
+(map (fn [[k v]]
+       (+ k v))
+     {"a" 1 "b" 2})  ;; ("a1" "b2")
+            </code></pre>
+            <aside class="notes">
+              Notice we are destructuring each element.
+            </aside>
+          </section>
+          <section>
+            <p>Other functional programming goodies like</p>
+            <ul>
+              <li><code>comp</code></li>
+              <li><code>complement</code></li>
+              <li><code>juxt</code></li>
+              <li><code>partial</code></li>
+              <li><code>memoize</code></li>
+            </ul>
+          </section>
+          <section>
+            <h2>Lazy-evaluation</h2>
+            <p>Works on one element at a time and may not even remember prior elements</p>
+          </section>
+          <section>
+            <p>Do something to each element in an infinite list, but take only the first three results</p>
+            <pre><code data-trim contenteditable class="Clojure">
+(let [inf (iterate inc 0)]
+  ;; an infinite list starting at zero
+  (take 3 (map #(+ "foo" %) inf)))
+;; ("foo0" "foo1" "foo2")
+            </code></pre>
+            <aside class="notes">
+              Don't try infinite lists in the REPL. The REPL will try
+              to evaluate them and print them.
+            </aside>
+          </section>
+	  <section>
+	    <p>The only constant is</p>
+	    <h2>Immutable datatypes</h2>
+	    <p><small>Skipping this for regular JS</small></p>
+            <aside class="notes">
+	      Neat idea, but not a big deal in single-threaded JS
+	      engines. See Rich's
+	      talk <a href="http://www.infoq.com/presentations/Are-We-There-Yet-Rich-Hickey">Are
+	      We There Yet?</a> for a detailed discussion about state,
+	      identity, and time.
+            </aside>
+	  </section>
+        </section>
 
-		<link rel="stylesheet" href="css/reveal.min.css">
-		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+        <section>
+          <section>
+            <h2>YAOOP</h2>
+            <p>Yet Another Object-Oriented Paradigm</p>
+          </section>
+          <section>
+            <p>Javascript has <em>prototypes</em></p>
+            <h2>ClojureScript has <em>protocols</em></h2>
+            <aside class="notes">
+	      Most functional languages don't make a big deal about
+	      OOP since normal OOP tends to be stateful.
+            </aside>
+          </section>
+          <section>
+            <p>Data is represented by <em>types</em> or <em>records</em></p>
+            <pre><code data-trim contenteditable class="Clojure">
+(deftype Person [first-name last-name age gender])
+(def jd (Person. "John" "Doe" 31 :male))
+(.age jd)  ;; 31
+            </code></pre>
+            <pre><code data-trim contenteditable class="Clojure">
+(defrecord Person [first-name last-name age gender])
+(def jd (Person. "John" "Doe" 31 :male))
+(jd :age)  ;; 31
+            </code></pre>
+            <aside class="notes">
+              You will want to use records (similar to structs in C)
+              in most typical cases of modeling real world objects,
+              e.g., people, financial transactions, etc. Anything that
+              takes up a row in your database. You will probably use
+              types for building new primitives, e.g., a circular
+              buffer with a preallocated array and corresponding head
+              and tail indices.
+            </aside>
+          </section>
+          <section>
+            <h2><em>Protocols</em> = Java interfaces</h2>
+            <p>You operate on types or records via one or more protocols</p>
+          </section>
+          <section>
+            <pre><code data-trim contenteditable class="Clojure">
+(defprotocol Helloable
+  (say-hello [me]))
+(extend-record Person
+  Helloable
+  (say-hello [me]
+    (+ "Hello, my name is " (me :first-name))))
+(extend-record Dog
+  Helloable
+  (say-hello [_] "Woof! Woof!"))
+            </code></pre>
+          </section>
+          <section>
+            <h2>What about inheritance?</h2>
+            <p>Protocols do not support inheritance</p>
+          </section>
+          <section>
+            <p>Another way of extending Dog</p>
+            <aside class="notes">
+              This is semantically identical to the previous
+              code. extend-type is a macro and we will cover macro
+              expansions later.
+            </aside>
+            <pre><code data-trim contenteditable class="Clojure">
+(extend Dog
+  Helloable
+  {:say-hello (fn [_] "Woof! Woof!")})
+            </code></pre>
+            <aside class="notes">
+              We use extend on Dog with a map of function names and
+              their lambdas.
+            </aside>
+          </section>
+          <section>
+            <pre><code data-trim contenteditable class="Clojure">
+(def cant-speak
+  {:say-hello (fn [_] "...")})
+(extend Fish
+  Helloable
+  cant-speak)
+(extend Rock
+  Helloable
+  cant-speak)
+            </code></pre>
+          </section>
+          <section>
+            <p>What good are protocols?</p>
+            <h2>Saner and safer than monkey patching</h2>
+          </section>
+          <section>
+            <pre><code data-trim contenteditable class="Javascript">
+// Person.js
+function Person(firstName, lastName) {
+  this.firstName = firstName;
+  this.lastName = lastName;
+}
 
-		<!-- For syntax highlighting -->
-		<link rel="stylesheet" href="lib/css/zenburn.css">
+jd = new Person("John", "Doe");
+            </code></pre>
+            <pre><code data-trim contenteditable class="Javascript">
+// XMLwriter.js
+Person.prototype.render = function() {
+  return "&lt;person firstname=\"" +
+    this.firstName + "\" lastname=\"" +
+    this.lastName + "\" /&gt";
+}
 
-		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
-		<script>
-			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
-		</script>
+// ... more render functions for other prototypes ...
 
-		<!--[if lt IE 9]>
-		<script src="lib/js/html5shiv.js"></script>
-		<![endif]-->
-	</head>
+function write(object) {
+  return 
+    "&lt;?xml version=\"1.0\" encoding=\"UTF-8\" ?&gt;" +
+    object.render();
+}
+            </code></pre>
+            <p><small>Contrived example</small></p>
+            <p><small>Do not attempt this at home</small></p>
+          </section>
+          <section>
+            <pre><code data-trim contenteditable class="Javascript">
+// YAMLwriter.js
+Person.prototype.render = function() {
+  return "person:" +
+    "\n    firstname: " + this.firstName +
+    "\n    lastname: " + this.lastName + "\n";
+}
 
-	<body>
+// ... more render functions for other prototypes ...
 
-		<div class="reveal">
+function write(object) {
+  return
+    "---\n" +
+    object.render();
+}
+            </code></pre>
+            <aside class="notes">
+              Both definitions occur in the same namespace, trampling
+              over each other. The render function occurs in
+              Person.prototype and the write occurs in the global
+              namespace. Even if you put the write function in its own
+              namespace the render will still conflict in both XML and
+              YAML.
+            </aside>
+          </section>
+          <section>
+            <pre><code data-trim contenteditable class="Clojure">
+(ns xml-writer)
 
-			<!-- Any section element inside of this container is displayed as a slide -->
-			<div class="slides">
+(defprotocol XMLRenderable
+  (render [o]))
 
-				<section>
-					<h1>Reveal.js</h1>
-					<h3>HTML Presentations Made Easy</h3>
-					<p>
-						<small>Created by <a href="http://hakim.se">Hakim El Hattab</a> / <a href="http://twitter.com/hakimel">@hakimel</a></small>
-					</p>
-				</section>
+(extend-record Person
+  XMLRenderable
+  (render [p]
+    [ "&lt;person firstname=\""
+      (p :first-name) "\" lastname=\""
+      (p :last-name) "\" /&gt" ]))
 
-				<section>
-					<h2>Heads Up</h2>
-					<p>
-						reveal.js is a framework for easily creating beautiful presentations using HTML. You'll need a browser with
-						support for CSS 3D transforms to see it in its full glory.
-					</p>
+(write [o]
+  (apply str (concat
+    "&lt;?xml version=\"1.0\" encoding=\"UTF-8\" ?&gt"
+    (render o))))
+            </code></pre>
+            <aside class="notes">
+              First use of ClojureScript's namespacing.
+            </aside>
+            <aside class="notes">
+	      <code>extend-record</code> can also be used on records
+              we didn't define for true monkey-patching.
+            </aside>
+          </section>
+          <section>
+            <pre><code data-trim contenteditable class="Clojure">
+(ns yaml-writer)
 
-					<aside class="notes">
-						Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
-					</aside>
-				</section>
+(defprotocol YAMLRenderable
+  (render [o]))
 
-				<!-- Example of nested vertical slides -->
-				<section>
-					<section>
-						<h2>Vertical Slides</h2>
-						<p>
-							Slides can be nested inside of other slides,
-							try pressing <a href="#" class="navigate-down">down</a>.
-						</p>
-						<a href="#" class="image navigate-down">
-							<img width="178" height="238" src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Down arrow">
-						</a>
-					</section>
-					<section>
-						<h2>Basement Level 1</h2>
-						<p>Press down or up to navigate.</p>
-					</section>
-					<section>
-						<h2>Basement Level 2</h2>
-						<p>Cornify</p>
-						<a class="test" href="http://cornify.com">
-							<img width="280" height="326" src="https://s3.amazonaws.com/hakim-static/reveal-js/cornify.gif" alt="Unicorn">
-						</a>
-					</section>
-					<section>
-						<h2>Basement Level 3</h2>
-						<p>That's it, time to go back up.</p>
-						<a href="#/2" class="image">
-							<img width="178" height="238" src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Up arrow" style="-webkit-transform: rotate(180deg);">
-						</a>
-					</section>
-				</section>
+(extend-record Person
+  YAMLRenderable
+  (render [p]
+    [ "person:\n"
+      "    firstname: " (p :first-name) "\n"
+      "    lastname: " (p :last-name) "\n" ]))
 
-				<section>
-					<h2>Slides</h2>
-					<p>
-						Not a coder? No problem. There's a fully-featured visual editor for authoring these, try it out at <a href="http://slid.es" target="_blank">http://slid.es</a>.
-					</p>
-				</section>
+(write [o]
+  (apply str (concat
+    "---\n" (render o))))
+            </code></pre>
+          </section>
+          <section>
+            <p>Another more powerful technique is available</p>
+            <h2>Multiple dispatch</h2>
+            <p><small>I will leave that for another time</small></p>
+          </section>
+        </section>
 
-				<section>
-					<h2>Point of View</h2>
-					<p>
-						Press <strong>ESC</strong> to enter the slide overview.
-					</p>
-					<p>
-						Hold down alt and click on any element to zoom in on it using <a href="http://lab.hakim.se/zoom-js">zoom.js</a>. Alt + click anywhere to zoom back out.
-					</p>
-				</section>
-
-				<section>
-					<h2>Works in Mobile Safari</h2>
-					<p>
-						Try it out! You can swipe through the slides and pinch your way to the overview.
-					</p>
-				</section>
-
-				<section>
-					<h2>Marvelous Unordered List</h2>
-					<ul>
-						<li>No order here</li>
-						<li>Or here</li>
-						<li>Or here</li>
-						<li>Or here</li>
-					</ul>
-				</section>
-
-				<section>
-					<h2>Fantastic Ordered List</h2>
-					<ol>
-						<li>One is smaller than...</li>
-						<li>Two is smaller than...</li>
-						<li>Three!</li>
-					</ol>
-				</section>
-
-				<section data-markdown>
-					<script type="text/template">
-						## Markdown support
-
-						For those of you who like that sort of thing. Instructions and a bit more info available [here](https://github.com/hakimel/reveal.js#markdown).
-
-						```
-						<section data-markdown>
-						  ## Markdown support
-
-						  For those of you who like that sort of thing.
-						  Instructions and a bit more info available [here](https://github.com/hakimel/reveal.js#markdown).
-						</section>
-						```
-					</script>
-				</section>
-
-				<section id="transitions">
-					<h2>Transition Styles</h2>
-					<p>
-						You can select from different transitions, like: <br>
-						<a href="?transition=cube#/transitions">Cube</a> -
-						<a href="?transition=page#/transitions">Page</a> -
-						<a href="?transition=concave#/transitions">Concave</a> -
-						<a href="?transition=zoom#/transitions">Zoom</a> -
-						<a href="?transition=linear#/transitions">Linear</a> -
-						<a href="?transition=fade#/transitions">Fade</a> -
-						<a href="?transition=none#/transitions">None</a> -
-						<a href="?#/transitions">Default</a>
-					</p>
-				</section>
-
-				<section id="themes">
-					<h2>Themes</h2>
-					<p>
-						Reveal.js comes with a few themes built in: <br>
-						<a href="?theme=sky#/themes">Sky</a> -
-						<a href="?theme=beige#/themes">Beige</a> -
-						<a href="?theme=simple#/themes">Simple</a> -
-						<a href="?theme=serif#/themes">Serif</a> -
-						<a href="?theme=night#/themes">Night</a> -
-						<a href="?#/themes">Default</a>
-					</p>
-					<p>
-						<small>
-							* Theme demos are loaded after the presentation which leads to flicker. In production you should load your theme in the <code>&lt;head&gt;</code> using a <code>&lt;link&gt;</code>.
-						</small>
-					</p>
-				</section>
-
-				<section>
-					<section data-state="alert">
-						<h2>Global State</h2>
-						<p>
-							Set <code>data-state="something"</code> on a slide and <code>"something"</code>
-							will be added as a class to the document element when the slide is open. This lets you
-							apply broader style changes, like switching the background.
-						</p>
-						<a href="#" class="image navigate-down">
-							<img width="178" height="238" src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Down arrow">
-						</a>
-					</section>
-					<section data-state="blackout">
-						<h2>"blackout"</h2>
-						<a href="#" class="image navigate-down">
-							<img width="178" height="238" src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Down arrow">
-						</a>
-					</section>
-					<section data-state="soothe">
-						<h2>"soothe"</h2>
-						<a href="#" class="image navigate-next">
-							<img width="178" height="238" src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Up arrow" style="-webkit-transform: rotate(-90deg);">
-						</a>
-					</section>
-				</section>
-
-				<section data-state="customevent">
-					<h2>Custom Events</h2>
-					<p>
-						Additionally custom events can be triggered on a per slide basis by binding to the <code>data-state</code> name.
-					</p>
-					<pre><code data-trim contenteditable style="font-size: 18px; margin-top: 20px;">
-Reveal.addEventListener( 'customevent', function() {
-	console.log( '"customevent" has fired' );
-} );
-					</code></pre>
-				</section>
-
-				<section>
-					<h2>Clever Quotes</h2>
-					<p>
-						These guys come in two forms, inline: <q cite="http://searchservervirtualization.techtarget.com/definition/Our-Favorite-Technology-Quotations">
-						&ldquo;The nice thing about standards is that there are so many to choose from&rdquo;</q> and block:
-					</p>
-					<blockquote cite="http://searchservervirtualization.techtarget.com/definition/Our-Favorite-Technology-Quotations">
-						&ldquo;For years there has been a theory that millions of monkeys typing at random on millions of typewriters would
-						reproduce the entire works of Shakespeare. The Internet has proven this theory to be untrue.&rdquo;
-					</blockquote>
-				</section>
-
-				<section>
-					<h2>Pretty Code</h2>
-					<pre><code data-trim contenteditable>
-function linkify( selector ) {
-  if( supports3DTransforms ) {
-
-    var nodes = document.querySelectorAll( selector );
-
-    for( var i = 0, len = nodes.length; i &lt; len; i++ ) {
-      var node = nodes[i];
-
-      if( !node.className ) ) {
-        node.className += ' roll';
-      }
-    };
+        <section>
+          <section>
+            <h2>Flexible metaprogramming</h2>
+          </section>
+          <section>
+            <p>There is a reason for Lisp's funny syntax</p>
+            <h2>Homoiconicity</h2>
+          </section>
+          <section>
+            <h2>Code is data</h2>
+            <p>You're writing the <a href="http://en.wikipedia.org/wiki/Abstract_syntax_tree">AST</a></p>
+          </section>
+          <section>
+            <h2>Macros manipulate code</h2>
+            <p>Macros are Clojure code that manipulate Clojure code</p>
+          </section>
+          <section>
+            <h2>Invent new language constructs</h2>
+            <p>Implement <code>unless</code></p>
+          </section>
+          <section>
+            <p>Hypothetical usage</p>
+            <pre><code data-trim contenteditable class="Javascript">
+unless (false) {
+  console.log("This will print");
+}
+            </code></pre>
+          </section>
+          <section>
+            <pre><code data-trim contenteditable class="Javascript">
+var unless = function (condition, false_block) {
+  if (!condition) {
+    false_block;
   }
 }
-					</code></pre>
-					<p>Courtesy of <a href="http://softwaremaniacs.org/soft/highlight/en/description/">highlight.js</a>.</p>
-				</section>
+            </code></pre>
+          </section>
+          <section>
+            <pre><code data-trim contenteditable class="Javascript">
+unless(false, console.log("This will print"));
+// This will print
+            </code></pre>
+            <p>... So far so good</p>
+            <pre><code data-trim contenteditable class="Javascript">
+unless(true, console.log("This won't print"));
+// This won't print
+            </code></pre>
+            <p>... Oops</p>
+          </section>
+          <section>
+            <p>The correct usage is awkward</p>
+            <pre><code data-trim contenteditable class="Javascript">
+var unless = function (condition, false_function) {
+  if (!condition) {
+    false_function();
+  }
+}
+unless(true, function () {
+  console.log("This won't print");
+});
+            </code></pre>
+          </section>
+          <section>
+            <pre><code data-trim contenteditable class="Clojure">
+(defmacro unless [condition & body]
+  `(when (not ~condition)
+     ~@body))
+            </code></pre>
+          </section>
+          <section>
+            <pre><code data-trim contenteditable class="Clojure">
+(unless true
+  (println "This won't print")
+            </code></pre>
+            <p>Gets expanded at compile time to</p>
+            <pre><code data-trim contenteditable class="Clojure">
+(when (not true)
+  (println "This won't print")
+            </code></pre>
+          </section>
+          <section>
+            <p>There are other uses for macros</p>
+            <h2>Compiled templates</h2>
+          </section>
+          <section>
+            <p>Using <a href="https://github.com/Prismatic/dommy">Dommy</a></p>
+            <pre><code data-trim contenteditable class="Clojure">
+(defn simple-template [txt]
+  (dommy.template/node 
+    [:a.anchor.silly
+     {:href "http://somelink.com"} txt]))
+            </code></pre>
+            <aside class="notes">
+              Without macros, the vector will have to be traversed
+              every time, parsing the keywords and elements. The
+              attribute maps will have to be traversed too.
+            </aside>
+          </section>
+          <section>
+            <p>Generated from macro</p>
+            <pre><code data-trim contenteditable class="Clojure">
+(let [dom6238 (.createElement js/document "a")]
+  (.setAttribute dom6238 "href" "http://somelink")
+  (set! (.-className dom6238) "anchor silly")
+  (set! (.-textContent dom6238) txt)
+  dom6238)
+            </code></pre>
+          </section>
+          <section>
+            <pre><code data-trim contenteditable class="Javascript">
+$('&lt;a&gt;').attr('href', 'http://somelink')
+        .addClass('anchor').addClass('silly')
+        .text(txt)
+            </code></pre>
+          </section>
+          <section>
+            <p>Similar <a href="http://blog.getprismatic.com/blog/2013/1/22/the-magic-of-macros-lighting-fast-templating-in-clojurescript">benchmark</a> performed by Prismatic</p>
+            <table>
+              <tr><td>dommy</td><td>2.06 secs</td></tr>
+              <tr><td>jQuery</td><td>1.57 secs</td></tr>
+              <tr><td>dommy-macro</td><td>0.44 secs</td></tr>
+            </table>
+          </section>
+        </section>
 
-				<section>
-					<h2>Intergalactic Interconnections</h2>
-					<p>
-						You can link between slides internally,
-						<a href="#/2/3">like this</a>.
-					</p>
-				</section>
+        <section>
+          <section>
+            <h2>So what's the bad news?</h2>
+            <p>Some rough spots, but under active development</p>
+          </section>
+          <section>
+            <h2>Not full Clojure</h2>
+            <p>Some missing pieces, e.g. <code>eval</code></p>
+            <p>Code sharing is awkward</p>
+            <aside class="notes">
+              Code sharing
+              via <a href="https://github.com/emezeske/lein-cljsbuild/blob/master/doc/CROSSOVERS.md">crossovers</a>
+              in <a href="https://github.com/emezeske/lein-cljsbuild">lein-cljsbuild</a>. Feature
+	      expressions (from Common Lisp) are coming soon.
+            </aside>
+          </section>
+          <section>
+            <h2>Limited libraries and tools</h2>
+            <p>Unit testing is lacking</p>
+            <p>Few native libraries, some wrappers</p>
+            <aside class="notes">
+	      <a href="https://github.com/technomancy/leiningen">Leiningen</a> is a decent build system.
+            </aside>
+          </section>
+          <section>
+            <h2>It uses Google Closure</h2>
+            <p><a href="https://developers.google.com/closure/">Closure</a> works for Google, but JS purists might be sad</p>
+            <aside class="notes">
+              Extensive functionality: library loading, cross-browser
+              API
+            </aside>
+            <aside class="notes">
+              e.g. Classical inheritance, optimizing compiler breaks a
+              few libraries
+            </aside>
+          </section>
+          <section>
+            <h2>No source maps</h2>
+            <p><small>Coming soon</small></p>
+            <aside class="notes">
+              Double-compilation from Google Closure makes this
+              tricky. Profiling and debugging is a bit painful.
+            </aside>
+          </section>
+        </section>
 
-				<section>
-					<section>
-						<h2>Fragmented Views</h2>
-						<p>Hit the next arrow...</p>
-						<p class="fragment">... to step through ...</p>
-						<ol>
-							<li class="fragment"><code>any type</code></li>
-							<li class="fragment"><em>of view</em></li>
-							<li class="fragment"><strong>fragments</strong></li>
-						</ol>
+	<section>
+          <a href="http://clojurecup.com/"><img src="images/clojurecup.png" /></a>
+	  <aside>
+	    2-day hackathon in September for those who want to
+	    practice and learn.
+	  </aside>
+	</section>
 
-						<aside class="notes">
-							This slide has fragments which are also stepped through in the notes window.
-						</aside>
-					</section>
-					<section>
-						<h2>Fragment Styles</h2>
-						<p>There's a few styles of fragments, like:</p>
-						<p class="fragment grow">grow</p>
-						<p class="fragment shrink">shrink</p>
-						<p class="fragment roll-in">roll-in</p>
-						<p class="fragment fade-out">fade-out</p>
-						<p class="fragment highlight-red">highlight-red</p>
-						<p class="fragment highlight-green">highlight-green</p>
-						<p class="fragment highlight-blue">highlight-blue</p>
-					</section>
-				</section>
+        <section>
+          <h2>Lim Yu-Xi</h2>
+          <p><a href="mailto:limyuxi@gmail.com">limyuxi@gmail.com</a></p>
+          <p><a href="https://twitter.com/snarfnbarf">@snarfnbarf</a></p>
+          <p>GitHub <a href="https://github.com/thirteen37">@thirteen37</a></p>
+        </section>
 
-				<section>
-					<h2>Spectacular image!</h2>
-					<a class="image" href="http://lab.hakim.se/meny/" target="_blank">
-						<img width="320" height="299" src="http://s3.amazonaws.com/hakim-static/portfolio/images/meny.png" alt="Meny">
-					</a>
-				</section>
+        <section>
+          <h2>Further reading</h2>
+          <p><a href="https://github.com/clojure/clojurescript">Official GitHub</a></p>
+          <p><a href="http://himera.herokuapp.com/index.html">Himera</a> has a REPL and <a href="http://himera.herokuapp.com/synonym.html">comparison</a></p>
+          <p>Language developer's <a href="http://dev.clojure.org/display/design/ClojureScript">wiki</a></p>
+          <p><a href="http://clojurescriptone.com/">ClojureScript One</a> tutorial for Clojure + CLJS Web apps</p>
+	  <p>Stuart Sierra's <a href="http://shop.oreilly.com/product/0636920025139.do">ClojureScript book</a> and <a href="http://www.youtube.com/watch?v=EpcNDd8nuYY">Clojure/ClojureScript presentation</a></p>
+	  <p>Bodil Stokke's <a href="http://www.youtube.com/watch?v=MTxNnYfWHOw">ClojureScript All the Way Down</a></p>
+        </section>
+        <section>
+          <h2>Libraries</h2>
+          <p><a href="http://www.chris-granger.com/projects/cljs/">Several</a> from Chris Granger (Light Table), including <a href="https://github.com/ibdknox/jayq">jayq</a> JQuery wrapper</p>
+          <p><a href="http://pedestal.io/">Pedestal</a> full-stack framework for Clojure + CLJS</p>
+          <p><a href="https://github.com/Prismatic/dommy">Dommy</a> HTML templating</p>
+          <p><a href="https://github.com/noprompt/garden">Garden</a> CSS templating</p>
+          <p><a href="https://github.com/levand/domina">Domina</a> DOM manipulation</p>
+	  <p><a href="https://github.com/drcode/webfui">WebFUI</a> DOM manipulation and binding</p>
+          <p><a href="http://keminglabs.com/c2/">C2</a> native CLJS D3 clone, without animation support</p>
+        </section>
+      </div>
+    </div>
 
-				<section>
-					<h2>Export to PDF</h2>
-					<p>Presentations can be <a href="https://github.com/hakimel/reveal.js#pdf-export">exported to PDF</a>, below is an example that's been uploaded to SlideShare.</p>
-					<iframe id="slideshare" src="http://www.slideshare.net/slideshow/embed_code/13872948" width="455" height="356" style="margin:0;overflow:hidden;border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen> </iframe>
-					<script>
-						document.getElementById('slideshare').attributeName = 'allowfullscreen';
-					</script>
-				</section>
+    <script src="lib/js/head.min.js" type="text/javascript"></script>
+    <script src="js/reveal.min.js" type="text/javascript"></script>
 
-				<section>
-					<h2>Take a Moment</h2>
-					<p>
-						Press b or period on your keyboard to enter the 'paused' mode. This mode is helpful when you want to take distracting slides off the screen
-						during a presentation.
-					</p>
-				</section>
+    <script type="text/javascript">
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+      controls: true,
+      progress: true,
+      history: true,
+      center: true,
 
-				<section>
-					<h2>Stellar Links</h2>
-					<ul>
-						<li><a href="http://slid.es">Try the online editor</a></li>
-						<li><a href="https://github.com/hakimel/reveal.js">Source code on GitHub</a></li>
-						<li><a href="http://twitter.com/hakimel">Follow me on Twitter</a></li>
-					</ul>
-				</section>
+      theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+      transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
 
-				<section>
-					<h1>THE END</h1>
-					<h3>BY Hakim El Hattab / hakim.se</h3>
-				</section>
-
-			</div>
-
-		</div>
-
-		<script src="lib/js/head.min.js"></script>
-		<script src="js/reveal.min.js"></script>
-
-		<script>
-
-			// Full list of configuration options available here:
-			// https://github.com/hakimel/reveal.js#configuration
-			Reveal.initialize({
-				controls: true,
-				progress: true,
-				history: true,
-				center: true,
-
-				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
-
-				// Optional libraries used to extend on reveal.js
-				dependencies: [
-					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
-					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
-					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
-					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
-					// { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
-					// { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
-				]
-			});
-
-		</script>
-
-	</body>
+      // Optional libraries used to extend on reveal.js
+      dependencies: [
+      { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+      { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+      { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+      { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+      // { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
+      // { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+      ]
+      });
+    </script>
 </html>
